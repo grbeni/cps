@@ -44,9 +44,9 @@ public class App {
 			double currentTemperature = minTemperature + rand.nextDouble() * 15;
 			double currentHumidity = minHumidity + rand.nextDouble() * 20;
 			CloudData telemetryDataPoint = new CloudData();
-			telemetryDataPoint.deviceId = deviceId;
-			telemetryDataPoint.temperature = currentTemperature;
-			telemetryDataPoint.humidity = currentHumidity;
+//			telemetryDataPoint.deviceId = deviceId;
+//			telemetryDataPoint.temperature = currentTemperature;
+//			telemetryDataPoint.humidity = currentHumidity;
 
 			String msgStr = telemetryDataPoint.serialize();
 			Message msg = new Message(msgStr);
