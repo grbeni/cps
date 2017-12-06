@@ -12,7 +12,7 @@ public class MySubscriber extends DataReaderAdapter {
 		UvegHazDataReader uvegHazReader = (UvegHazDataReader) reader;
 		SampleInfo info = new SampleInfo();
 
-		for (;;) {
+		while(true) {
 			try {
 				UvegHaz given = new UvegHaz();
 				uvegHazReader.take_next_sample(given, info);

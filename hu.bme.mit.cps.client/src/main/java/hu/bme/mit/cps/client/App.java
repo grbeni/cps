@@ -32,7 +32,9 @@ public class App {
 	}
 	
 	private static class MessageSender implements Runnable {
-	  public void run()  {
+	  private static final int SLEEP_TIME = 3000;
+
+	public void run()  {
 		try {
 		  double minTemperature = 20;
 		  double minHumidity = 60;
@@ -59,7 +61,7 @@ public class App {
 			synchronized (lockobj) {
 			  lockobj.wait();
 			}
-			Thread.sleep(3000);
+			Thread.sleep(SLEEP_TIME);
 		  }
 		} catch (InterruptedException e) {
 		  System.out.println("Finished.");
