@@ -10,6 +10,7 @@ import com.rti.dds.subscription.DataReaderAdapter;
 import com.rti.dds.subscription.SampleInfo;
 
 import hu.bme.mit.cps.client.CloudData;
+import hu.bme.mit.cps.rest.client.TimetableClient;
 
 public class GasConcentrationSubscriber extends DataReaderAdapter {
 	
@@ -17,10 +18,13 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	private CloudDataSender sender;
 	// Stores whether the last check resulted in an alert
 	private boolean hadAlert;
+	// TO communicate with the timetable service
+	private TimetableClient timetableClient;
 	
 	public GasConcentrationSubscriber(ActuatorCommandPublisher commandPublisher) {
 		this.commandPublisher = commandPublisher;
 		this.sender = new CloudDataSender();
+		timetableClient = new TimetableClient();
 	}
 	
 	private Queue<UvegHaz> dataQueue = new LinkedList<UvegHaz>();
@@ -68,7 +72,8 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	
 	private boolean checkConcentration() {
 		// TODO Auto-generated method stub
-		// a File reading is needed
+		System.out.println("Has lesson: " + timetableClient.hasLesson());
+
 		return true;
 	}
 
