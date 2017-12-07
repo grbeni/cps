@@ -13,20 +13,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-public class TimeTable {
+public class Timetable {
 
-	private List<TimeTableEntry> entries;
+	private List<TimetableEntry> entries;
 	
-	public TimeTable() {
-		entries = new ArrayList<TimeTableEntry>();
+	public Timetable() {
+		entries = new ArrayList<TimetableEntry>();
 	}
 	
-	public void addEntry(TimeTableEntry entry) {
+	public void addEntry(TimetableEntry entry) {
 		entries.add(entry);
 	}
 	
 	public boolean containsLesson(Date date) {
-		for (TimeTableEntry entry : entries) {
+		for (TimetableEntry entry : entries) {
 			if (entry.inBetween(date)) {
 				return true;
 			}
@@ -35,8 +35,8 @@ public class TimeTable {
 	}
 	
 	public void deleteUntil(Date date) {
-		List<TimeTableEntry> newEntries = new ArrayList<TimeTableEntry>(entries);
-		for (TimeTableEntry entry : entries) {
+		List<TimetableEntry> newEntries = new ArrayList<TimetableEntry>(entries);
+		for (TimetableEntry entry : entries) {
 			if (entry.before(date)) {
 				newEntries.remove(entry);
 			}
@@ -57,7 +57,7 @@ public class TimeTable {
 	public void load(File file) {
 		try {
 			Gson gson = new Gson();
-			TimeTable savedTimeTable = gson.fromJson(new FileReader(file), TimeTable.class);
+			Timetable savedTimeTable = gson.fromJson(new FileReader(file), Timetable.class);
 			this.entries = savedTimeTable.entries;
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public class TimeTable {
 
 	@Override
 	public String toString() {
-		return "TimeTable [entries=" + entries + "]";
+		return "Timetable [entries=" + entries + "]";
 	}
 	
 }

@@ -2,13 +2,13 @@ package hu.bme.mit.cps.timetable;
 
 import java.util.Date;
 
-public class TimeTableEntry {
+public class TimetableEntry {
 
 	private String lessonName;
 	private Date beginning;	
 	private Date end;
 	
-	public TimeTableEntry(String lessonName, Date beginning, Date end) {
+	public TimetableEntry(String lessonName, Date beginning, Date end) {
 		this.lessonName = lessonName;
 		this.beginning = beginning;
 		this.end = end;
@@ -49,7 +49,7 @@ public class TimeTableEntry {
 	
 	@Override
 	public String toString() {
-		return "TimeTableEntry [lessonName=" + lessonName + ", beginning=" + beginning + ", end=" + end + "]";
+		return "TimetableEntry [lessonName=" + lessonName + ", beginning=" + beginning + ", end=" + end + "]";
 	}
 	
 }

@@ -7,29 +7,29 @@ public class TimetableService implements ITimetableService {
 
 	private final String FILE_NAME = "F:\\git\\cps\\hu.bme.mit.cps.timetable\\src\\main\\resources\\timetable.txt";
 	
-	private TimeTable timeTable;
+	private Timetable timetable;
 	
 	public TimetableService() {
-		timeTable = new TimeTable();
+		timetable = new Timetable();
 		try {
 			// Loading the database
-			timeTable.load(new File(FILE_NAME));
+			timetable.load(new File(FILE_NAME));
 			// Deleting old entries
-			timeTable.deleteUntil(new Date());
+			timetable.deleteUntil(new Date());
 			// Saving the database
-			timeTable.serialize(new File(FILE_NAME));
+			timetable.serialize(new File(FILE_NAME));
 		} catch (Throwable e) {
 			// Error handling
 			e.printStackTrace();
 			File saveFile = new File(FILE_NAME);
-			timeTable.addEntry(new TimeTableEntry("CPS", new Date(), new Date()));
-			timeTable.serialize(saveFile);
+			timetable.addEntry(new TimetableEntry("CPS", new Date(), new Date()));
+			timetable.serialize(saveFile);
 		}
 	}
 	
 	@Override
 	public LessonAnswer hasLesson() {
-		return new LessonAnswer(timeTable.containsLesson(new Date()));
+		return new LessonAnswer(timetable.containsLesson(new Date()));
 	}
 
 }

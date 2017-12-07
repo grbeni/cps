@@ -1,2 +1,1 @@
-{"entries":[{"lessonName":"CPS","beginning":"Dec 8, 2017 1:15:00 PM","end":"Dec 8, 2017 1:45:00 PM"},
-{"lessonName":"CPS","beginning":"Dec 8, 2018 1:15:00 PM","end":"Dec 8, 2018 1:45:00 PM"}]}
+{"entries":[{"lessonName":"CPS","beginning":"Dec 8, 2017 12:15:00 AM","end":"Dec 8, 2017 1:10:00 AM"},{"lessonName":"CPS","beginning":"Dec 8, 2017 1:15:00 PM","end":"Dec 8, 2017 1:45:00 PM"},{"lessonName":"CPS","beginning":"Dec 8, 2018 1:15:00 PM","end":"Dec 8, 2018 1:45:00 PM"}]}
