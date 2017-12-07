@@ -1,5 +1,4 @@
-
-
+package hu.bme.mit.cps.dds;
 /*
 WARNING: THIS FILE IS AUTO-GENERATED. DO NOT MODIFY.
 
