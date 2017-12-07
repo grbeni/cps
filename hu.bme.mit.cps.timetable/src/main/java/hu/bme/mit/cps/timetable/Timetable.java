@@ -4,7 +4,7 @@ public class Timetable implements ITimetable {
 
 	@Override
 	public LessonAnswer hasLesson() {
-		return new LessonAnswer(false);
+		return new LessonAnswer(true);
 	}
 
 }

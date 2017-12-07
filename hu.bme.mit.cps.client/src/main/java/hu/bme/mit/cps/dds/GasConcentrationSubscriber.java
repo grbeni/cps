@@ -13,6 +13,7 @@ import com.rti.dds.subscription.SampleInfo;
 
 import hu.bme.mit.cps.client.CloudData;
 import hu.bme.mit.cps.constants.MyConstants;
+import hu.bme.mit.cps.rest.client.TimetableClient;
 
 public class GasConcentrationSubscriber extends DataReaderAdapter {
 
@@ -104,7 +105,8 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 			@Override
 			public void run() {
 				System.out.println("Checking lesson");
-				hasLesson = timetableClient.hasLesson().getLesson();
+				hasLesson = timetableClient.hasLesson();
+				System.out.println(hasLesson);
 			}
 		}, 0, MyConstants.LESSON_CHECK_INTERVAL);
 	}

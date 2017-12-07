@@ -6,11 +6,11 @@ import javax.ws.rs.client.WebTarget;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
-public class TimetableClient implements ITimetable {
+public class TimetableClient {
 
 	public boolean hasLesson() {
 		ITimetable timetableClient = createClient(ITimetable.class);
-		return timetableClient.hasLesson();
+		return timetableClient.hasLesson().getLesson();
 	}
 	
 	private <T> T createClient(Class<T> clazz) {
