@@ -7,8 +7,15 @@ import javax.ws.rs.client.WebTarget;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
-public class TimetableClient {
+public class TimetableClient implements Runnable {
 
+	public boolean lessonResult;
+	
+	public void run() {
+		this.lessonResult = this.hasLesson().getLesson();
+		System.out.println("OVer");
+	}
+	
 	public LessonAnswer hasLesson() {
 		System.out.println("Hello");
 		Client client =  ClientBuilder.newClient();

@@ -8,4 +8,9 @@ public class MyConstants {
 	public static final IotHubClientProtocol PROTOCOL = IotHubClientProtocol.HTTPS;
 	public static final String DEVICE_ID = "myComputer";
 	
+	// TODO increase this value
+	public static final int LESSON_CHECK_INTERVAL = 5 * 1000;
+	
+	// TODO specify the ranges
+	
 }
