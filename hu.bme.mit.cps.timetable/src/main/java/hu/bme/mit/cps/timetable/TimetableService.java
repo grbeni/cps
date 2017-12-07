@@ -12,23 +12,24 @@ public class TimetableService implements ITimetableService {
 	public TimetableService() {
 		timeTable = new TimeTable();
 		try {
+			// Loading the database
 			timeTable.load(new File(FILE_NAME));
-			System.out.println(timeTable);			
+			// Deleting old entries
+			timeTable.deleteUntil(new Date());
+			// Saving the database
+			timeTable.serialize(new File(FILE_NAME));
 		} catch (Throwable e) {
-			System.err.println("Error");
+			// Error handling
 			e.printStackTrace();
-			Date beginning = new Date();
 			File saveFile = new File(FILE_NAME);
-			System.out.println("Full path: " + saveFile.getAbsolutePath());
-			Date end = new Date();
-			timeTable.addEntry(new TimeTableEntry("CPS", beginning, end));
+			timeTable.addEntry(new TimeTableEntry("CPS", new Date(), new Date()));
 			timeTable.serialize(saveFile);
 		}
 	}
 	
 	@Override
 	public LessonAnswer hasLesson() {
-		return new LessonAnswer(true);
+		return new LessonAnswer(timeTable.containsLesson(new Date()));
 	}
 
 }
