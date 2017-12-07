@@ -13,7 +13,7 @@ public class TimeTableEntry {
 		this.beginning = beginning;
 		this.end = end;
 	}
-	
+
 	public boolean inBetween(Date date) {
 		return beginning.before(date) && end.after(date) ||
 				beginning.compareTo(date) == 0 || end.compareTo(date) == 0;
@@ -45,6 +45,11 @@ public class TimeTableEntry {
 
 	public void setEnd(Date end) {
 		this.end = end;
+	}
+	
+	@Override
+	public String toString() {
+		return "TimeTableEntry [lessonName=" + lessonName + ", beginning=" + beginning + ", end=" + end + "]";
 	}
 	
 }

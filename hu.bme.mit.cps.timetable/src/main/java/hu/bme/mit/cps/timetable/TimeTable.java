@@ -17,7 +17,9 @@ public class TimeTable {
 
 	private List<TimeTableEntry> entries;
 	
-	public TimeTable() {}
+	public TimeTable() {
+		entries = new ArrayList<TimeTableEntry>();
+	}
 	
 	public void addEntry(TimeTableEntry entry) {
 		entries.add(entry);
@@ -64,6 +66,11 @@ public class TimeTable {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "TimeTable [entries=" + entries + "]";
 	}
 	
 }
