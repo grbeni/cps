@@ -1,4 +1,4 @@
-package hu.bme.mit.cps.timetable;
+package hu.bme.mit.cps.dds;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

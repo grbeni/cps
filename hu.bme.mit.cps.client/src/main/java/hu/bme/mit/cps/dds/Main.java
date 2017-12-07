@@ -20,7 +20,6 @@ public class Main {
 	public static void main(String[] args) throws IOException {		
 		// Creating the infrastructure
 		createDdsInfrastructure();		
-		
 		// Writing data 
 		sendDummyData();
 
@@ -77,7 +76,8 @@ public class Main {
 			System.err.println("Unable to create DDS writer.");
 			return;
 		}
-		ActuatorCommandPublisher actuatorCommandPublisher = new ActuatorCommandPublisher(actuatorHandler);		
+		ActuatorCommandPublisher actuatorCommandPublisher = new ActuatorCommandPublisher(actuatorHandler);
+		// Creating the data reader
 		gasConcentrationSubscriber = new GasConcentrationSubscriber(actuatorCommandPublisher);
 		gasConcentrationReader = (UvegHazDataReader) participant.create_datareader(topic,
 				Subscriber.DATAREADER_QOS_USE_TOPIC_QOS, gasConcentrationSubscriber, StatusKind.DATA_AVAILABLE_STATUS);
