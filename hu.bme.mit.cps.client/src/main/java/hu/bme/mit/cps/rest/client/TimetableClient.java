@@ -9,7 +9,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 public class TimetableClient {
 
 	public boolean hasLesson() {
-		ITimetable timetableClient = createClient(ITimetable.class);
+		ITimetableService timetableClient = createClient(ITimetableService.class);
 		return timetableClient.hasLesson().getLesson();
 	}
 	
