@@ -1,4 +1,4 @@
-package hu.bme.mit.cps.dds;
+
 /*
 WARNING: THIS FILE IS AUTO-GENERATED. DO NOT MODIFY.
 
@@ -242,8 +242,7 @@ public class UvegHazTypeSupport extends TypeSupportImpl {
             origAlignment = 0;
         } 
 
-        currentAlignment += get_serialized_sample_max_size(
-            endpoint_data,false,encapsulation_id,currentAlignment);
+        currentAlignment += CdrPrimitiveType.getStringMaxSizeSerialized(currentAlignment, (255)+1);
         if (include_encapsulation) {
             currentAlignment += encapsulation_size;
         }
@@ -306,7 +305,8 @@ public class UvegHazTypeSupport extends TypeSupportImpl {
         if (serialize_key) {
 
             UvegHaz typedSrc = (UvegHaz) src;    
-            serialize(endpoint_data, src, dst, false, CdrEncapsulation.CDR_ENCAPSULATION_ID_CDR_BE, true, endpoint_plugin_qos);
+
+            dst.writeString(typedSrc.ID,255);
 
         }
 
@@ -396,7 +396,7 @@ public class UvegHazTypeSupport extends TypeSupportImpl {
 
             UvegHaz typedDst = (UvegHaz) dst;
 
-            deserialize_sample(endpoint_data, dst, src, false, true, endpoint_plugin_qos);
+            typedDst.ID = src.readString(255);
 
         }
         if (deserialize_encapsulation) {
@@ -456,9 +456,11 @@ public class UvegHazTypeSupport extends TypeSupportImpl {
 
             UvegHaz typedDst = (UvegHaz) sample;
 
-            deserialize_sample(
-                endpoint_data, sample, src, false,
-                true, endpoint_plugin_qos);
+            typedDst.ID = src.readString(255);
+
+            src.skipDouble();
+
+            src.skipInt();
 
         }
 
@@ -467,6 +469,68 @@ public class UvegHazTypeSupport extends TypeSupportImpl {
         }
 
         return sample;
+    }
+
+    /* Fill in the key fields of the given instance sample based on the key.
+    */
+    public void key_to_instance(Object endpoint_data,
+    Object instance,
+    Object key) {
+        UvegHaz typedDst
+        = (UvegHaz) instance;
+        UvegHaz typedSrc
+        = (UvegHaz) key;
+        typedDst.ID = typedSrc.ID;
+
+    }
+
+    /* Fill in the given key based on the key fields of the given instance
+    * sample.
+    */
+    public void instance_to_key(Object endpoint_data,
+    Object key,
+    Object instance) {
+        UvegHaz typedDst
+        = (UvegHaz)key;
+        UvegHaz typedSrc
+        = (UvegHaz) instance;
+        typedDst.ID = typedSrc.ID;
+
+    }
+
+    public void serialized_sample_to_keyhash(
+        Object endpoint_data,
+        CdrInputStream src,
+        KeyHash_t keyhash,
+        boolean include_encapsulation,
+        Object endpoint_plugin_qos)
+    {
+        int position = 0;
+
+        DefaultEndpointData endpointData = (DefaultEndpointData) endpoint_data;
+        Object sample = null;
+
+        sample = endpointData.get_sample();
+
+        if (sample == null) {
+            throw new RETCODE_ERROR("Missing intermediate sample");
+        }
+
+        UvegHaz typedDst = (UvegHaz) sample;
+
+        if (include_encapsulation) {
+            src.deserializeAndSetCdrEncapsulation();
+
+            position = src.resetAlignment();
+        }
+
+        typedDst.ID = src.readString(255);
+
+        if (include_encapsulation) {
+            src.restoreAlignment(position);
+        }
+
+        instance_to_keyhash(endpoint_data, keyhash, sample);
     }
 
     // -----------------------------------------------------------------------
@@ -526,7 +590,7 @@ public class UvegHazTypeSupport extends TypeSupportImpl {
         to the constructor below should be true.  Otherwise it should
         be false. */        
 
-        super(TYPE_NAME, false,UvegHazTypeCode.VALUE,UvegHaz.class,TypeSupportType.TST_STRUCT, PLUGIN_VERSION);
+        super(TYPE_NAME,true,UvegHazTypeCode.VALUE,UvegHaz.class,TypeSupportType.TST_STRUCT, PLUGIN_VERSION);
 
     }
 

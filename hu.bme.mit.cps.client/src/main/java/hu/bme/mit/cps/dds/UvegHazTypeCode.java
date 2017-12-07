@@ -1,4 +1,4 @@
-package hu.bme.mit.cps.dds;
+
 /*
 WARNING: THIS FILE IS AUTO-GENERATED. DO NOT MODIFY.
 
@@ -18,7 +18,7 @@ public class  UvegHazTypeCode {
         int __i=0;
         StructMember sm[]=new StructMember[3];
 
-        sm[__i]=new  StructMember("ID", false, (short)-1,  false,(TypeCode) new TypeCode(TCKind.TK_STRING,255),0 , false);__i++;
+        sm[__i]=new  StructMember("ID", false, (short)-1, true,(TypeCode) new TypeCode(TCKind.TK_STRING,255),0 , false);__i++;
         sm[__i]=new  StructMember("Value", false, (short)-1,  false,(TypeCode) TypeCode.TC_DOUBLE,1 , false);__i++;
         sm[__i]=new  StructMember("TimeStamp", false, (short)-1,  false,(TypeCode) TypeCode.TC_LONG,2 , false);__i++;
 
