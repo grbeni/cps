@@ -18,7 +18,7 @@ import hu.bme.mit.cps.datastructs.UvegHazDataReader;
 import hu.bme.mit.cps.rest.client.TimetableClient;
 
 public class GasConcentrationSubscriber extends DataReaderAdapter {
-	// Sends actuating commands through dds
+	// Sends actuating commands through DDS
 	private ActuatorCommandPublisher commandPublisher;
 	// Sends data to the cloud
 	private CloudDataSender sender;
@@ -65,8 +65,9 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	}
 
 	private void handleData(UvegHaz uvegHaz) {
+		double concentration = uvegHaz.Value;
 		// Checking whether alert is needed
-		boolean isAlert = checkConcentration(uvegHaz.Value);
+		boolean isAlert = needsAlert(concentration);
 		// Using actuators
 		if (isAlert && !hadAlert) {
 			// Opening window and starting fan
@@ -77,19 +78,38 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 			commandPublisher.turnOffFan();
 		}
 		hadAlert = isAlert;
+		// Checking the level
+		String alertLevel = alertLevel(concentration);
 		// Sending data to cloud
-		sender.send(new CloudData(uvegHaz, ""), isAlert);
+		sender.send(new CloudData(uvegHaz, alertLevel), isAlert);
 	}
 
-	private boolean checkConcentration(double concentration) {
-		// TODO
+	private boolean needsAlert(double concentration) {
 		if (hasLesson) {
-
+			return concentration >= MyConstants.WARNING_LEVEL_CLASS;
 		} else {
-
+			return concentration >= MyConstants.WARNING_LEVEL_NO_CLASS;
 		}
-
-		return true;
+	}
+	
+	private String alertLevel(double concentration) {
+		if (hasLesson) {
+			if (concentration >= MyConstants.CRITICAL_LEVEL_CLASS) {
+				return "critical";
+			}
+			if (concentration >= MyConstants.WARNING_LEVEL_CLASS) {
+				return "warning";
+			}
+		}
+		else {
+			if (concentration >= MyConstants.CRITICAL_LEVEL_NO_CLASS) {
+				return "critical";
+			}
+			if (concentration >= MyConstants.WARNING_LEVEL_NO_CLASS) {
+				return "warning";
+			}
+		}		
+		return "normal";
 	}
 
 	private void storeDataLocally(UvegHaz uvegHaz) {

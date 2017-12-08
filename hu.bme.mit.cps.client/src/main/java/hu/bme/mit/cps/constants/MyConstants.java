@@ -13,5 +13,9 @@ public class MyConstants {
 	public static final int LESSON_CHECK_INTERVAL = 5 * 1000;
 	
 	// TODO specify the ranges
+	public static final int WARNING_LEVEL_CLASS = 200;
+	public static final int WARNING_LEVEL_NO_CLASS = 300;
+	public static final int CRITICAL_LEVEL_CLASS = 500;
+	public static final int CRITICAL_LEVEL_NO_CLASS = 700;
 	
 }

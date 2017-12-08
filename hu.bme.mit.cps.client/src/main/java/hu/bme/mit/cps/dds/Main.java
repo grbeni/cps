@@ -1,6 +1,7 @@
 package hu.bme.mit.cps.dds;
 
 import java.io.IOException;
+import java.util.Date;
 
 import com.rti.dds.domain.DomainParticipant;
 import com.rti.dds.domain.DomainParticipantFactory;
@@ -41,9 +42,11 @@ public class Main {
 		uvegHaz.Value = 99.9;
 		uvegHaz.TimeStamp = 1;
 		while (true) {
+			uvegHaz.Value = Math.random() * 1000;
+			uvegHaz.TimeStamp = (int) new Date().getTime();
 			dataWriter.write(uvegHaz, InstanceHandle_t.HANDLE_NIL);
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
