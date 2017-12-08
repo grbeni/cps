@@ -1,8 +1,6 @@
-package hu.bme.mit.cps.client;
+package hu.bme.mit.cps.datastructs;
 
 import com.google.gson.Gson;
-
-import hu.bme.mit.cps.dds.UvegHaz;
 
 public class CloudData {
 	

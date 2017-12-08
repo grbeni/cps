@@ -10,6 +10,11 @@ import com.rti.dds.publication.Publisher;
 import com.rti.dds.subscription.Subscriber;
 import com.rti.dds.topic.Topic;
 
+import hu.bme.mit.cps.datastructs.UvegHaz;
+import hu.bme.mit.cps.datastructs.UvegHazDataReader;
+import hu.bme.mit.cps.datastructs.UvegHazDataWriter;
+import hu.bme.mit.cps.datastructs.UvegHazTypeSupport;
+
 public class Main {
 	
 	private static UvegHazDataWriter dataWriter;

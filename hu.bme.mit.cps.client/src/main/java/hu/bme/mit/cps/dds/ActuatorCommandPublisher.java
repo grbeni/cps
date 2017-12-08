@@ -1,5 +1,7 @@
 package hu.bme.mit.cps.dds;
 
+import hu.bme.mit.cps.datastructs.UvegHazDataWriter;
+
 public class ActuatorCommandPublisher {
 	
 	private UvegHazDataWriter actuatorWriter;

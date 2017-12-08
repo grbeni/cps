@@ -11,8 +11,10 @@ import com.rti.dds.subscription.DataReader;
 import com.rti.dds.subscription.DataReaderAdapter;
 import com.rti.dds.subscription.SampleInfo;
 
-import hu.bme.mit.cps.client.CloudData;
 import hu.bme.mit.cps.constants.MyConstants;
+import hu.bme.mit.cps.datastructs.CloudData;
+import hu.bme.mit.cps.datastructs.UvegHaz;
+import hu.bme.mit.cps.datastructs.UvegHazDataReader;
 import hu.bme.mit.cps.rest.client.TimetableClient;
 
 public class GasConcentrationSubscriber extends DataReaderAdapter {

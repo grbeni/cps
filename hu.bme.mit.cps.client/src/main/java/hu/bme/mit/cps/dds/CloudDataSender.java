@@ -8,8 +8,8 @@ import com.microsoft.azure.sdk.iot.device.IotHubEventCallback;
 import com.microsoft.azure.sdk.iot.device.IotHubStatusCode;
 import com.microsoft.azure.sdk.iot.device.Message;
 
-import hu.bme.mit.cps.client.CloudData;
 import hu.bme.mit.cps.constants.MyConstants;
+import hu.bme.mit.cps.datastructs.CloudData;
 
 public class CloudDataSender {
 

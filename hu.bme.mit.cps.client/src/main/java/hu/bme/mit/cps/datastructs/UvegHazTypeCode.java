@@ -1,4 +1,4 @@
-package hu.bme.mit.cps.dds;
+package hu.bme.mit.cps.datastructs;
 /*
 WARNING: THIS FILE IS AUTO-GENERATED. DO NOT MODIFY.
 
