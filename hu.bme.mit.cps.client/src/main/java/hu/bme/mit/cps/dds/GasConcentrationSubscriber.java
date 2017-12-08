@@ -61,7 +61,6 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	private void handleData(UvegHaz uvegHaz) {

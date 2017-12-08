@@ -6,8 +6,13 @@ import java.util.Date;
 import com.rti.dds.domain.DomainParticipant;
 import com.rti.dds.domain.DomainParticipantFactory;
 import com.rti.dds.infrastructure.InstanceHandle_t;
+import com.rti.dds.infrastructure.RETCODE_ERROR;
+import com.rti.dds.infrastructure.RETCODE_NO_DATA;
 import com.rti.dds.infrastructure.StatusKind;
 import com.rti.dds.publication.Publisher;
+import com.rti.dds.subscription.DataReader;
+import com.rti.dds.subscription.DataReaderAdapter;
+import com.rti.dds.subscription.SampleInfo;
 import com.rti.dds.subscription.Subscriber;
 import com.rti.dds.topic.Topic;
 
@@ -63,6 +68,7 @@ public class Main {
 		// Registering our own type
 		String uvegHazTypeName = UvegHazTypeSupport.get_type_name();
 		UvegHazTypeSupport.register_type(participant, uvegHazTypeName);
+		
 		// Creating the actuator topic
 		Topic actuatorTopic = participant.create_topic("window", uvegHazTypeName,
 				DomainParticipant.TOPIC_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
@@ -91,8 +97,8 @@ public class Main {
 			System.err.println("Unable to create DDS writer.");
 			return;
 		}
-		// Creating the data reader
 		ActuatorCommandPublisher actuatorCommandPublisher = new ActuatorCommandPublisher(actuatorHandler);
+		// Creating the data reader
 		gasConcentrationSubscriber = new GasConcentrationSubscriber(actuatorCommandPublisher);
 		gasConcentrationReader = (UvegHazDataReader) participant.create_datareader(readDataTopic,
 				Subscriber.DATAREADER_QOS_USE_TOPIC_QOS, gasConcentrationSubscriber, StatusKind.DATA_AVAILABLE_STATUS);
@@ -100,12 +106,37 @@ public class Main {
 			System.err.println("Unable to create DDS reader.");
 			return;
 		}
+		// Testing the actuating commands
+		UvegHazDataReader commandReader = (UvegHazDataReader) participant.create_datareader(actuatorTopic,
+				Subscriber.DATAREADER_QOS_USE_TOPIC_QOS, new CommandReader(), StatusKind.DATA_AVAILABLE_STATUS);
 	}
 	
 	private static void tearDownDdsInfrastructure() {
 		gasConcentrationSubscriber.shutDown(); // Releasing the cloud client
 		participant.delete_contained_entities();
 		DomainParticipantFactory.get_instance().delete_participant(participant);		
+	}
+	
+	// For testing
+	public static class CommandReader extends DataReaderAdapter {
+		public void on_data_available(DataReader reader) {
+			UvegHazDataReader uvegHazReader = (UvegHazDataReader) reader;
+			SampleInfo info = new SampleInfo();
+
+			while (true) {
+				try {
+					UvegHaz receivedData = new UvegHaz();
+					uvegHazReader.take_next_sample(receivedData, info);
+					if (info.valid_data) {
+						System.out.println("Actuating command arrived: " + receivedData);
+					}
+				} catch (RETCODE_NO_DATA e) {
+					break;
+				} catch (RETCODE_ERROR e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 }
