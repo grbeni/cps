@@ -60,31 +60,38 @@ public class Main {
 		// Registering our own type
 		String uvegHazTypeName = UvegHazTypeSupport.get_type_name();
 		UvegHazTypeSupport.register_type(participant, uvegHazTypeName);
-		// Creating the topic
-		Topic topic = participant.create_topic("UvegHaz", uvegHazTypeName,
+		// Creating the actuator topic
+		Topic actuatorTopic = participant.create_topic("window", uvegHazTypeName,
 				DomainParticipant.TOPIC_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
-		if (topic == null) {
+		if (actuatorTopic == null) {
+			System.err.println("Unable to create topic.");
+			return;
+		}
+		// Creating the data reading topic
+		Topic readDataTopic = participant.create_topic("humidity", uvegHazTypeName,
+				DomainParticipant.TOPIC_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
+		if (readDataTopic == null) {
 			System.err.println("Unable to create topic.");
 			return;
 		}
 		// TESTING For dummy data
 		dataWriter = (UvegHazDataWriter) participant.create_datawriter(
-				topic, Publisher.DATAWRITER_QOS_USE_TOPIC_QOS, null, StatusKind.DATA_AVAILABLE_STATUS);
+				readDataTopic, Publisher.DATAWRITER_QOS_USE_TOPIC_QOS, null, StatusKind.DATA_AVAILABLE_STATUS);
 		if (dataWriter == null) {
 			System.err.println("Unable to create DDS writer.");
 			return;
 		}
 		// Creating the actuator handler
 		UvegHazDataWriter actuatorHandler = (UvegHazDataWriter) participant.create_datawriter(
-				topic, Publisher.DATAWRITER_QOS_USE_TOPIC_QOS, null, StatusKind.DATA_AVAILABLE_STATUS);
+				actuatorTopic, Publisher.DATAWRITER_QOS_USE_TOPIC_QOS, null, StatusKind.DATA_AVAILABLE_STATUS);
 		if (dataWriter == null) {
 			System.err.println("Unable to create DDS writer.");
 			return;
 		}
-		ActuatorCommandPublisher actuatorCommandPublisher = new ActuatorCommandPublisher(actuatorHandler);
 		// Creating the data reader
+		ActuatorCommandPublisher actuatorCommandPublisher = new ActuatorCommandPublisher(actuatorHandler);
 		gasConcentrationSubscriber = new GasConcentrationSubscriber(actuatorCommandPublisher);
-		gasConcentrationReader = (UvegHazDataReader) participant.create_datareader(topic,
+		gasConcentrationReader = (UvegHazDataReader) participant.create_datareader(readDataTopic,
 				Subscriber.DATAREADER_QOS_USE_TOPIC_QOS, gasConcentrationSubscriber, StatusKind.DATA_AVAILABLE_STATUS);
 		if (gasConcentrationReader == null) {
 			System.err.println("Unable to create DDS reader.");

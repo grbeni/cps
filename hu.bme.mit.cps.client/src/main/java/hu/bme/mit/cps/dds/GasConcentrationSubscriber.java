@@ -18,8 +18,9 @@ import hu.bme.mit.cps.datastructs.UvegHazDataReader;
 import hu.bme.mit.cps.rest.client.TimetableClient;
 
 public class GasConcentrationSubscriber extends DataReaderAdapter {
-
+	// Sends actuating commands through dds
 	private ActuatorCommandPublisher commandPublisher;
+	// Sends data to the cloud
 	private CloudDataSender sender;
 	// Stores whether the last check resulted in an alert
 	private boolean hadAlert;

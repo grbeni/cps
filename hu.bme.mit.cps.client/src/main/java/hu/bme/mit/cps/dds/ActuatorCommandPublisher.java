@@ -1,5 +1,10 @@
 package hu.bme.mit.cps.dds;
 
+import java.util.Date;
+
+import com.rti.dds.infrastructure.InstanceHandle_t;
+
+import hu.bme.mit.cps.datastructs.UvegHaz;
 import hu.bme.mit.cps.datastructs.UvegHazDataWriter;
 
 public class ActuatorCommandPublisher {
@@ -11,19 +16,29 @@ public class ActuatorCommandPublisher {
 	}
 	
 	public void turnOnFan() {
-		// TODO
+		actuatorWriter.write(createUvegHaz("setvent", 1, (int) new Date().getTime()), InstanceHandle_t.HANDLE_NIL);
 	}
 	
 	public void turnOffFan() {
-		// TODO
+		actuatorWriter.write(createUvegHaz("setvent", 0, (int) new Date().getTime()), InstanceHandle_t.HANDLE_NIL);
 	}
 	
-	public void openWindow() {
-		// TODO
+	public void openWindow() {	
+		actuatorWriter.write(createUvegHaz("setwindow1", 1, (int) new Date().getTime()), InstanceHandle_t.HANDLE_NIL);
+		actuatorWriter.write(createUvegHaz("setwindow2", 1, (int) new Date().getTime()), InstanceHandle_t.HANDLE_NIL);
 	}
 
 	public void closeWindow() {
-		// TODO
+		actuatorWriter.write(createUvegHaz("setwindow1", 0, (int) new Date().getTime()), InstanceHandle_t.HANDLE_NIL);
+		actuatorWriter.write(createUvegHaz("setwindow2", 0, (int) new Date().getTime()), InstanceHandle_t.HANDLE_NIL);
 	}	
+	
+	private UvegHaz createUvegHaz(String id, int value, int timeStamp) {
+		UvegHaz uvegHazData = new UvegHaz();
+		uvegHazData.ID = id;
+		uvegHazData.Value = value;
+		uvegHazData.TimeStamp = timeStamp;
+		return uvegHazData;
+	}
 	
 }
