@@ -129,7 +129,7 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 			public void run() {
 				System.out.println("Checking lesson");
 				hasLesson = timetableClient.hasLesson();
-				System.out.println("has lesson: " + hasLesson);
+				System.out.println("Has lesson: " + hasLesson);
 			}
 		}, 0, MyConstants.LESSON_CHECK_INTERVAL);
 	}

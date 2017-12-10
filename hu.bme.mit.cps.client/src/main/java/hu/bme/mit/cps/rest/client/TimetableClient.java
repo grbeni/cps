@@ -10,7 +10,9 @@ public class TimetableClient {
 
 	public boolean hasLesson() {
 		ITimetableService timetableClient = createClient(ITimetableService.class);
-		return timetableClient.hasLesson().getLesson();
+		LessonAnswer lessonAnswer = timetableClient.hasLesson();
+		System.out.println("Incoming lesson answer: " + lessonAnswer.getDate());
+		return lessonAnswer.getLesson();
 	}
 	
 	private <T> T createClient(Class<T> clazz) {

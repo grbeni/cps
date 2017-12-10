@@ -77,6 +77,7 @@ public class Main {
 			return;
 		}
 		// Creating the data reading topic
+		// TODO the name will have to be changed
 		Topic readDataTopic = participant.create_topic("humidity", uvegHazTypeName,
 				DomainParticipant.TOPIC_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
 		if (readDataTopic == null) {
