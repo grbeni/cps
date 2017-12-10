@@ -30,6 +30,8 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	private TimetableClient timetableClient;
 	// Timer to check the lessons periodically
 	private final Timer timer;
+	// Storing the last ... messages
+	private Queue<UvegHaz> dataQueue = new LinkedList<UvegHaz>();
 
 	public GasConcentrationSubscriber(ActuatorCommandPublisher commandPublisher) {
 		this.commandPublisher = commandPublisher;
@@ -39,7 +41,6 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 		this.startLessonCheck();
 	}
 
-	private Queue<UvegHaz> dataQueue = new LinkedList<UvegHaz>();
 
 	public void on_data_available(DataReader reader) {
 		UvegHazDataReader uvegHazReader = (UvegHazDataReader) reader;
@@ -63,7 +64,7 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 		}
 	}
 
-	private void handleData(UvegHaz uvegHaz) {
+	private void handleData(final UvegHaz uvegHaz) {
 		double concentration = uvegHaz.Value;
 		// Checking whether alert is needed
 		boolean isAlert = needsAlert(concentration);

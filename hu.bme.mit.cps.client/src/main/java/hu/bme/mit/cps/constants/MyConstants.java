@@ -10,12 +10,12 @@ public class MyConstants {
 	public static final String DEVICE_ID = "myComputer";
 	
 	// TODO increase this value
-	public static final int LESSON_CHECK_INTERVAL = 5 * 1000;
+	public static final int LESSON_CHECK_INTERVAL = 5 * 1000; // 60 * 1000 ms
 	
 	// TODO specify the ranges
-	public static final int WARNING_LEVEL_CLASS = 200;
-	public static final int WARNING_LEVEL_NO_CLASS = 300;
-	public static final int CRITICAL_LEVEL_CLASS = 500;
-	public static final int CRITICAL_LEVEL_NO_CLASS = 700;
+	public static final int WARNING_LEVEL_CLASS = 200; // 1000 ppm
+	public static final int WARNING_LEVEL_NO_CLASS = 300; // 2000 ppm
+	public static final int CRITICAL_LEVEL_CLASS = 500; // 4000 ppm
+	public static final int CRITICAL_LEVEL_NO_CLASS = 700; // 5000 ppm
 	
 }
