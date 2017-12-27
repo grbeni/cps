@@ -44,33 +44,35 @@
 	\author{Bence Graics}	
 	
 	\maketitle
+	\tableofcontents
+	\newpage
 	
 	This document introduces the implementation of a cyber-physical system (CPS) prototype, whose task is to keep the \emph{carbon-dioxide} concentration level of the air in a particular \emph{conservatory} under an acceptable limit value.
-	The conservatory has two \emph{windows}, and a single \emph{fan}, which can be used to circulate the air the facility. The local elements of the CPS, which are located in the conservatory, are the followings:
+	The conservatory is an object with the approximate volume of a cubic meter. It has two \emph{windows} and a single \emph{fan}, which can be used to circulate the air in the object. The local elements of the presented CPS, which are located in the conservatory, are the followings:
 	\begin{itemize}
-		\item a \textbf{CO$_2$ sensor}, capable of measuring the CO$_2$ concentration level of the air in a certain room,
+		\item a \textbf{CO$_2$ sensor}, capable of measuring the CO$_2$ concentration level of the air in the particular conservatory,
 		\item a \textbf{window handling engine}, capable of opening and closing the windows of the particular conservatory,
-		\item a \textbf{fan controller}, capable of turning the fan of the conservatory on and off, located in the particular conservatory.
+		\item a \textbf{fan controller}, capable of turning the fan, located in the particular conservatory, on and off.
 	\end{itemize}
 	
-	In addition to controlling the CO$_2$ concentration level, the CPS has to provide additional services, called remote services, that are located in the \emph{cloud}. The remote services of the CPS are as follows. 
+	In addition to controlling the CO$_2$ concentration level, the CPS has to provide additional services, called cloud services, that are located in the \emph{cloud}. The cloud services of the CPS are as follows. 
 	\begin{itemize}
-		\item \textbf{Historical data storage:} the CPS shall provide access to historical data with respect to the CO$_2$ concentration level of the air in the particular conservatory.
-		\item \textbf{Data visualization:} the CPS shall provide means to visualize historical data of the CO$_2$ concentration level of the air in the particular conservatory.
-		\item \textbf{Alert service:} the CPS shall send e-mails to given addresses when the CO$_2$ concentration level exceeds a certain limit value.
-		\item \textbf{Timetable service:} the limit value of the CO$_2$ concentration can be different depending on whether there is human activity in the particular conservatory or not. In the absence of human activity the limit value is higher in order to spare energy. The dates of human activity can be appointed using this timetable service, which shall be accessible by the CPS.
+		\item \textbf{Historical data storage:} the CPS provides access to historical data with respect to the CO$_2$ concentration level of the air in the particular conservatory.
+		\item \textbf{Data visualization:} the CPS provides means to visualize historical data of the CO$_2$ concentration level of the air in the particular conservatory.
+		\item \textbf{Alert service:} the CPS send alerts when the CO$_2$ concentration level exceeds a certain limit value.
+		\item \textbf{Timetable service:} the limit value of the CO$_2$ concentration can be different depending on whether there is human activity in the particular conservatory or not. In the absence of human activity the limit value is higher in order to spare energy. The dates of human activity can be appointed using the timetable service, which are used by the CPS when calculating limit values.
 	\end{itemize}
 	
-	The rest of the document presents the implementation process of the CPS. First, the most important high-level requirements regarding the CPS are introduced. Next, design and implementation details are presented for both the local components and the remote services. Finally, thoughts and concluding remarks are shared.	
+	The rest of the document presents the development process of the CPS. First, the most important high-level requirements regarding the CPS are introduced. Next, design and implementation details are presented for both the local components and the cloud services. Finally, thoughts and concluding remarks are shared.	
 	
 	\section{Requirements}
 	\label{sec:requirements}
-	This section presents the requirements the developed CPS has to meet. These requirements have been collected with the help of the conservatory owners and are the basis of design on which the CPS is implemented (see Section \ref{sec:design}). The requirements are classified in accordance with the following aspects: functional requirements, extra-functional requirements and implementation constraints. Functional requirements are refined and partitioned into additional subclasses.
+	This section presents the requirements the developed CPS has to meet. These requirements have been collected with the help of the owners of the conservatory regarding the capabilities of the sensor and actuators. These requirements serve as the basis of the design upon which the implementation of the CPS is carried out (see Section \ref{sec:design}). The requirements are classified in accordance with the following aspects: functional requirements, extra-functional requirements and implementation constraints. Functional requirements are refined and partitioned into additional subclasses.
 	
 	\subsection{Functional Requirements}
 	
 	\paragraph{Sensing Capabilities}
-	REQ-SC-1: The local component shall sense the carbon-dioxide concentration of the air using a gas sensor at defined intervals.
+	REQ-SC-1: The system shall sense the carbon-dioxide concentration of the air using a gas sensor at defined intervals.
 	\paragraph{Actuating Capabilities}
 	
 	\paragraph{Accessible Services}
@@ -81,9 +83,9 @@
 	
 	\section{Design}
 	\label{sec:design}
-	This section introduces the design	choices on which the implementation of the CPS is carried out. First, the system-level architecture is presented, which is followed by some low level (component level) design details.
+	This section introduces the design	choices upon which the implementation of the CPS is carried out. First, the system-level architecture is presented, which is followed by some low level (component level) design details.
 	
-	Figure \ref{fig:architecture} depicts the architecture of the designed CPS. As can be seen, the system consists of three bigger blocks: the conservatory, a gateway and the cloud. 
+	Figure \ref{fig:architecture} depicts the architecture of the designed CPS. The system consists of three bigger blocks: the conservatory, a gateway and the cloud. 
 		
 		\begin{figure}[h!]
 			\center
@@ -96,7 +98,7 @@
 
 	\subsection{Conservatory}
 	\label{sec:conservatory}
-	The \textbf{conservatory}, as presented above, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the fan controller and the window handling engine actuators. The CO$_2$ concentration level can be sensed using the carbon-dioxide sensor. In this task we do not have to set or handle the conservatory physically. Instead, the sensing and actuating activities can be accessed via well-defined Data Distribution Service (DDS)\footnote{http://www.omg.org/spec/DDS/1.4} commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} snippet.
+	The \textbf{conservatory}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the fan controller and the window handling engine actuators. The CO$_2$ concentration level can be sensed using the carbon-dioxide sensor. In this task we do not have to set or handle the conservatory physically. Instead, the sensing and actuating activities can be accessed via well-defined Data Distribution Service (DDS)\footnote{http://www.omg.org/spec/DDS/1.4} commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet.
 	\begin{lstlisting}[
 		basicstyle=\small, %or \small or \footnotesize etc.
 	]
@@ -116,9 +118,9 @@ struct Conservatory{
 	
 	\subsection{Gateway}
 	
-	The task of the \textbf{gateway} is to control the carbon-dioxide level of the conservatory using its sensor and actuators. The communication between the conservatory and the gateway is based on DDS \ref{sec:conservatory}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service.
+	The task of the \textbf{gateway} is to control the carbon-dioxide level of the conservatory using its sensor and actuators. The communication between the conservatory and the gateway is based on DDS, as presented in Section \ref{sec:conservatory}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services.
 	
-	The gateway periodically samples the CO$_2$ concentration level of the conservatory and takes further actions based on the received value. The activity is represented in Figure \ref{fig:activity} using an activity diagram.
+	The gateway periodically samples the CO$_2$ concentration level of the conservatory and takes further actions based on the received value. The activity is depicted in Figure \ref{fig:activity} using an activity diagram.
 		
 	\begin{figure}[h!]
 		\center
@@ -130,7 +132,7 @@ struct Conservatory{
 	\end{figure}
 	
 	\subsection{Cloud Services}
-	The \textbf{cloud services}, apart from the timetable service, are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, if certain values of the incoming data are too high, alerts (in the form of e-mails) can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the conservatory.
+	The \textbf{cloud services} -- apart from the timetable service -- are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, if certain values of the incoming data are too high, alerts (in the form of e-mails) can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the conservatory.
 	
 	The timetable service is our custom implementation, whereas the other cloud services are provided by commercial cloud service providers.
 	
@@ -138,7 +140,7 @@ struct Conservatory{
 	
 	\subsubsection{Data and Alert Services}
 	
-	Figure \ref{fig:cloud} depicts the integration of the cloud services in Microsoft Azure.
+	Figure \ref{fig:cloud} depicts the integration of the data and alert services of the CPS.
 		
 	\begin{figure}[h!]
 		\center
@@ -152,12 +154,20 @@ struct Conservatory{
 	Each message transmitted to the cloud is first processed by the IoT Hub. This is the central element in the cloud. It is 		capable of routing incoming messages to other service nodes based on certain properties. The additional services are as follows.
 	 \begin{itemize}
 	 	\item Each message is transferred to the blob and saved (persistent storage).
-		\item Each message is transfered to the stream analytics service that sends the data to the Power BI visualization service.
+		\item Each message is transfered to the stream analytics service that sends the data to the visualization service.
 	 	\item If the alert property of a message is \textsl{true}, then a message is transmitted to the alert service bus. The service bus stores the messages in its queue and forwards them one-by-one to the alert logical app. The logical app is responsible for sending e-mails to the specified addresses.
 	 \end{itemize}
 	
 	\section{Implementation}
 	\label{sec:implementation}
+	This section presents the implementation details of the CPS based on the design introduced in Section \ref{sec:design}. The implementation details are partitioned into a local aspect, describing the details of the gateway implementation, and aspect of the cloud services. In both cases, the introduction starts with necessary technological environment, which is followed by a detailed guide on creating a functioning system.
+	
+	\subsection{Local Aspects}
+	
+	\subsection{Aspect of Cloud Services}
+	
+	\section{Conclusion}
+	
 %	Figure \ref{fig:architecture} depicts the architecture of the implemented CPS. As can be seen, the system consists of three bigger blocks: the conservatory, a gateway and the cloud. 
 %	
 %	\begin{figure}[h!]
@@ -248,9 +258,6 @@ struct Conservatory{
 %	 	\item Each message is transferred to the blob and saved (persistent storage).
 %	 	\item Each message is transfered to the stream analytics service that sends the data to the Power BI visualization service.
 %	 	\item If the alert property of a message is \textsl{true}, then a message is transmitted to the alert service bus. The service bus stores the messages in its queue and forwards them one-by-one to the alert logical app. The logical app is responsible for sending e-mails to the specified addresses.
-%	 \end{itemize}
-	
-	\section{Conclusion}
-	
+%	 \end{itemize}	
 	
 \end{document}
