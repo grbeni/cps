@@ -158,10 +158,10 @@ struct Greenhouse {
 	
 	\subsection{Gateway}
 	
-	The task of the \textbf{gateway} is to control the carbon-dioxide level of the greenhouse using its sensor and actuators. The communication between the greenhouse and the gateway is based on DDS, as presented in Section \ref{sec:greenhouse}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services.
+	The task of the \textbf{gateway} is to control the carbon-dioxide level of the greenhouse using data of its sensor and utilizing its actuators. The communication between the greenhouse and the gateway is based on DDS, as presented in Section \ref{sec:greenhouse}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services as defined in the requirements in Section \ref{sec:requirements}.	
 	
-	The gateway periodically samples the CO$_2$ concentration level of the greenhouse and takes further actions based on the received value. The activity is depicted in Figure \ref{fig:activity} using an activity diagram.
-		
+	The operation of the gateway is simple, it is depicted in Figure \ref{fig:activity} using an activity diagram.
+	
 	\begin{figure}[h!]
 		\center
 		\resizebox{140mm}{!}{
@@ -170,6 +170,21 @@ struct Greenhouse {
 		\caption{The activity diagram describing the periodic activity of the gateway.}
 		\label{fig:activity}
 	\end{figure}
+	
+	The gateway periodically samples the CO$_2$ concentration level of the air of the greenhouse. It saves the value locally, thus a certain number of samples are available even if the cloud service is unreachable for a short period of time. Moreover, the gateway sends the data to cloud in accordance with the following JSON format.
+	
+\begin{lstlisting}[
+	basicstyle=\small, %or \small or \footnotesize etc.
+]
+{"id":"Id","value":95.39,"timeStamp":935971181,
+ "comment":"critical"}
+\end{lstlisting}
+	
+	Further actions are based on the received concentration value as well as the data received from the timetable service. The logic reacts differently based on whether there is registered human activity in the room in the particular moment or not. To get this information the gateway communicates with the timetable service periodically (e.g, every minute) and stores the answer.
+	
+	If the CO$_2$ concentration of the air is on \emph{normal} level (regarding human activity in the room), the gateway ensures that the windows are closes and the fan is turned off by sending the corresponding DDS commands to the greenhouse. If the concentration is \emph{increased}, the gateway sends a warning message using the corresponding cloud service in addition to opening the windows and turning on the fans. Finally, if the CO$_2$ concentration level is \emph{critical}, it sends an alert message in addition to initiating the necessary actuating activities.
+		
+	As can be seen, the greenhouse with the gateway is responsible for implementing all \textsl{sensing} and \textsl{actuating} functional requirements: REQ-SC-1, and REQ-AC-1, REQ-AC-2, REQ-AC-3, REQ-AC-4. Furthermore, it partly implements accessible requirements REQ-AS-1 and REQ-AS-4-1. The messages are sent to the cloud via a secure channel to implement REQ-EF-2. Also, the logic is implemented in Java to meet REQ-IC-1. Finally, the communication with the greenhouse is based on DDS, thus, REQ-IC-2 is met.
 	
 	\subsection{Cloud Services}
 	The \textbf{cloud services} -- apart from the timetable service -- are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, if certain values of the incoming data are too high, alerts (in the form of e-mails) can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the greenhouse.
@@ -191,7 +206,7 @@ struct Greenhouse {
 		\label{fig:cloud}
 	\end{figure}
 	
-	Each message transmitted to the cloud is first processed by the IoT Hub. This is the central element in the cloud. It is 		capable of routing incoming messages to other service nodes based on certain properties. The additional services are as follows.
+	Each message transmitted to the cloud is first processed by the IoT Hub. This is the central element in the cloud. It is 	capable of routing incoming messages to other service nodes based on certain properties. The additional services are as follows.
 	 \begin{itemize}
 	 	\item Each message is transferred to the blob and saved (persistent storage).
 		\item Each message is transfered to the stream analytics service that sends the data to the visualization service.
