@@ -7,12 +7,17 @@
 \usepackage{url}
 \usepackage{graphics}
 \usepackage{listings}
+\usepackage{amssymb}
+\usepackage{pifont}
 \usepackage[a4paper, total={5.5in, 8in}]{geometry}
 
 \hyphenation{UPPAAL}
 \sloppy
 
 \begin{document}
+	
+	\newcommand{\cmark}{\ding{51}}%
+	\newcommand{\xmark}{\ding{55}}%
 	
 	\newcommand{\specialcell}[2][c]{%
 		\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
@@ -77,7 +82,7 @@
 	\paragraph{Actuating Capabilities}
 	REQ-AC-1: The system shall open the windows of the greenhouse when the carbon-dioxide concentration is above normal level and the window is closed.
 	
-	REQ-AC-2: The system shall close the windows  of the greenhouse when the carbon-dioxide concentration is on normal level and the window is open.
+	REQ-AC-2: The system shall close the windows of the greenhouse when the carbon-dioxide concentration is on normal level and the window is open.
 	
 	REQ-AC-3: The system shall turn on the fan of the greenhouse when the carbon-dioxide concentration is above normal level and the fan is turned off. 
 	
@@ -101,7 +106,7 @@
 	REQ-EF-2: The messages from the greenhouse to the cloud shall be transferred via a secure channel.
 	
 	\subsection{Implementation Constraints}
-	REQ-IC-1: The local components directly controlling the greenhouse shall operate on the Java platform\footnote{https://java.com/}.
+	REQ-IC-1: The local components directly controlling the greenhouse shall operate on the Java platform\footnote{https://www.java.com/}.
 	
 	REQ-IC-2: Separate local components shall communicate using the Distributed Data Service\footnote{http://www.omg.org/spec/DDS/1.4} (DDS).
 	
@@ -116,7 +121,7 @@
 		\begin{figure}[h!]
 			\center
 			\resizebox{140mm}{!}{
-				\includegraphics{fig/architecture.pdf}
+				\includegraphics{fig/component-architecture.pdf}
 			}
 			\caption{The architecture of the CPS.}
 			\label{fig:architecture}
@@ -128,18 +133,27 @@
 	\begin{lstlisting}[
 		basicstyle=\small, %or \small or \footnotesize etc.
 	]
-struct Greenhouse{
+struct Greenhouse {
   string ID; //@key
   double Value;
   long TimeStamp;
 };
 	\end{lstlisting}
 	
-	Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel.
+	Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel. Domain 0 is used for the communication. \emph{Topics} are used to segregate the command types.  Commands of certain topics can be \emph{read}, \emph{written} or \emph{read and written} by the greenhouse. The \emph{ID} of the command specifies the source (sensor) of particular data or concrete command (for actuation). The values of the commands specify particular data values or parameters of a certain command.
 	
-	\begin{mytable}{Valid DDS commands of the greenhouse.}{greenhouse-dds}{|cccc|}
+	\begin{mytable}{DDS commands of the greenhouse.}{greenhouse-dds}{|cccc|}
 		\hline
-		\textbf{Topic} & \textbf{Read/Written} & \textbf{ID} & \textbf{Possible Values} \\ \hline \hline
+		\textbf{Topic} & \textbf{ID} & \textbf{Read/Written} & \textbf{Values} \\ \hline \hline
+		co2 & co2 & \xmark/\cmark & \specialcell{The CO$_2$ concentration of the air in \\ppm sensed by the built-in CO$_2$ sensor \\ of the greenhouse.} \\ \hline
+		window & getwindow1 & \cmark/\xmark & \specialcell{The value field does not matter, \\ the greenhouse will return the state\\ of window1 in a command with id \textsl{window1}.} \\ \hline
+		window & getwindow2 & \cmark/\xmark & \specialcell{The value field does not matter, \\ the greenhouse will return the state\\ of window2 in a command with id \textsl{window2}.}  \\ \hline
+		window & window1 & \xmark/\cmark &  \specialcell{0 -- \textsl{window1} is closed, \\ 1 -- \textsl{window1} is open.} \\ \hline
+		window & window2 & \xmark/\cmark &  \specialcell{0 -- \textsl{window2} is closed, \\ 1 -- \textsl{window2} is open.}  \\ \hline
+		window & setwindow1 & \cmark/\xmark &  \specialcell{0 -- the greenhouse will close \textsl{window1}, \\ 1 -- the greenhouse will open \textsl{window1}.} \\ \hline
+		window & setwindow2 & \cmark/\xmark &  \specialcell{0 -- the greenhouse will close \textsl{window2}, \\ 1 -- the greenhouse will open \textsl{window2}.} \\ \hline
+		window & setvent & \cmark/\xmark &  \specialcell{0 -- the greenhouse will turn off the fan, \\ 1 -- the greenhouse will turn on the fan.} \\ \hline
+		
 	\end{mytable}
 	
 	\subsection{Gateway}
