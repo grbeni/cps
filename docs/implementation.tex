@@ -39,7 +39,7 @@
 	\setlength{\parindent}{0em}
 	\setlength{\parskip}{0.45em}
 	
-	\title{A Cyber-Physical System:\\Controlling the CO$_2$ Concentration of the Air in a Conservatory}
+	\title{A Cyber-Physical System:\\Controlling the CO$_2$ Concentration of the Air in a Greenhouse}
 	\date{}
 	\author{Bence Graics}	
 	
@@ -47,45 +47,71 @@
 	\tableofcontents
 	\newpage
 	
-	This document introduces the implementation of a cyber-physical system (CPS) prototype, whose task is to keep the \emph{carbon-dioxide} concentration level of the air in a particular \emph{conservatory} under an acceptable limit value.
-	The conservatory is an object with the approximate volume of a cubic meter. It has two \emph{windows} and a single \emph{fan}, which can be used to circulate the air in the object. The local elements of the presented CPS, which are located in the conservatory, are the followings:
+	This document introduces the implementation of a cyber-physical system (CPS) prototype, whose task is to keep the \emph{carbon-dioxide} concentration level of the air in a particular \emph{greenhouse} under an acceptable limit value.
+	The greenhouse is an object with the approximate volume of a cubic meter. It has two \emph{windows} and a single \emph{fan}, which can be used to circulate the air in the object. The local elements of the presented CPS, which are located in the greenhouse, are the followings:
 	\begin{itemize}
-		\item a \textbf{CO$_2$ sensor}, capable of measuring the CO$_2$ concentration level of the air in the particular conservatory,
-		\item a \textbf{window handling engine}, capable of opening and closing the windows of the particular conservatory,
-		\item a \textbf{fan controller}, capable of turning the fan, located in the particular conservatory, on and off.
+		\item a \textbf{CO$_2$ sensor}, capable of measuring the CO$_2$ concentration level of the air in the particular greenhouse,
+		\item a \textbf{window handling engine}, capable of opening and closing the windows of the particular greenhouse,
+		\item a \textbf{fan controller}, capable of turning the fan, located in the particular greenhouse, on and off.
 	\end{itemize}
 	
 	In addition to controlling the CO$_2$ concentration level, the CPS has to provide additional services, called cloud services, that are located in the \emph{cloud}. The cloud services of the CPS are as follows. 
 	\begin{itemize}
-		\item \textbf{Historical data storage:} the CPS provides access to historical data with respect to the CO$_2$ concentration level of the air in the particular conservatory.
-		\item \textbf{Data visualization:} the CPS provides means to visualize historical data of the CO$_2$ concentration level of the air in the particular conservatory.
+		\item \textbf{Historical data storage:} the CPS provides access to historical data with respect to the CO$_2$ concentration level of the air in the particular greenhouse.
+		\item \textbf{Data visualization:} the CPS provides means to visualize historical data of the CO$_2$ concentration level of the air in the particular greenhouse.
 		\item \textbf{Alert service:} the CPS send alerts when the CO$_2$ concentration level exceeds a certain limit value.
-		\item \textbf{Timetable service:} the limit value of the CO$_2$ concentration can be different depending on whether there is human activity in the particular conservatory or not. In the absence of human activity the limit value is higher in order to spare energy. The dates of human activity can be appointed using the timetable service, which are used by the CPS when calculating limit values.
+		\item \textbf{Timetable service:} the limit value of the CO$_2$ concentration can be different depending on whether there is human activity in the particular greenhouse or not. In the absence of human activity the limit value is higher in order to spare energy. The dates of human activity can be appointed using the timetable service, which are used by the CPS when calculating limit values.
 	\end{itemize}
 	
 	The rest of the document presents the development process of the CPS. First, the most important high-level requirements regarding the CPS are introduced. Next, design and implementation details are presented for both the local components and the cloud services. Finally, thoughts and concluding remarks are shared.	
 	
 	\section{Requirements}
 	\label{sec:requirements}
-	This section presents the requirements the developed CPS has to meet. These requirements have been collected with the help of the owners of the conservatory regarding the capabilities of the sensor and actuators. These requirements serve as the basis of the design upon which the implementation of the CPS is carried out (see Section \ref{sec:design}). The requirements are classified in accordance with the following aspects: functional requirements, extra-functional requirements and implementation constraints. Functional requirements are refined and partitioned into additional subclasses.
+	This section presents the requirements the developed CPS has to meet. These requirements have been collected with the help of the owners of the greenhouse regarding the capabilities of the sensor and actuators. These requirements serve as the basis of the design upon which the implementation of the CPS is carried out (see Section \ref{sec:design}). The requirements are classified in accordance with the following aspects: functional requirements, extra-functional requirements and implementation constraints. Functional requirements are refined and partitioned into additional subclasses.
 	
 	\subsection{Functional Requirements}
 	
 	\paragraph{Sensing Capabilities}
 	REQ-SC-1: The system shall sense the carbon-dioxide concentration of the air using a gas sensor at defined intervals.
+	
 	\paragraph{Actuating Capabilities}
+	REQ-AC-1: The system shall open the windows of the greenhouse when the carbon-dioxide concentration is above normal level and the window is closed.
+	
+	REQ-AC-2: The system shall close the windows  of the greenhouse when the carbon-dioxide concentration is on normal level and the window is open.
+	
+	REQ-AC-3: The system shall turn on the fan of the greenhouse when the carbon-dioxide concentration is above normal level and the fan is turned off. 
+	
+	REQ-AC-4: The system shall turn off the fan of the greenhouse when the carbon-dioxide concentration is on normal level and the fan is turned on.
 	
 	\paragraph{Accessible Services}
 	
-	\subsection{Extra-Functional Requirements}
+	REQ-AS-1: The system shall store historical data of carbon-dioxide concentration of the air in the greenhouse.
 	
-	\subsection{Design Constraints}
+	REQ-AS-2: The system shall send alerts when the carbon-dioxide concentration of the air in the greenhouse is above a limit value.
+	
+	REQ-AS-3: The system shall support the visualization of stored data.
+	
+	REQ-AS-4: The system shall support the registration of dates that represent human activity within the greenhouse.
+	
+	REQ-AS-4-1: The system shall specify a lower limit value on the acceptable carbon-dioxide concentration level in the time of human activity. In the absence of human activity, the limit value is higher.
+	
+	\subsection{Extra-Functional Requirements}
+	REQ-EF-1: The cloud services of the system shall be able to handle \textsl{1 message / 30 seconds} message rate. 
+	
+	REQ-EF-2: The messages from the greenhouse to the cloud shall be transferred via a secure channel.
+	
+	\subsection{Implementation Constraints}
+	REQ-IC-1: The local components directly controlling the greenhouse shall operate on the Java platform\footnote{https://java.com/}.
+	
+	REQ-IC-2: Separate local components shall communicate using the Distributed Data Service\footnote{http://www.omg.org/spec/DDS/1.4} (DDS).
+	
+	REQ-IC-3: The cloud services shall run in the Microsoft Azure Cloud\footnote{https://azure.microsoft.com/}.
 	
 	\section{Design}
 	\label{sec:design}
 	This section introduces the design	choices upon which the implementation of the CPS is carried out. First, the system-level architecture is presented, which is followed by some low level (component level) design details.
 	
-	Figure \ref{fig:architecture} depicts the architecture of the designed CPS. The system consists of three bigger blocks: the conservatory, a gateway and the cloud. 
+	Figure \ref{fig:architecture} depicts the architecture of the designed CPS. The system consists of three bigger blocks: the greenhouse, a gateway and the cloud. 
 		
 		\begin{figure}[h!]
 			\center
@@ -96,31 +122,31 @@
 			\label{fig:architecture}
 		\end{figure}
 
-	\subsection{Conservatory}
-	\label{sec:conservatory}
-	The \textbf{conservatory}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the fan controller and the window handling engine actuators. The CO$_2$ concentration level can be sensed using the carbon-dioxide sensor. In this task we do not have to set or handle the conservatory physically. Instead, the sensing and actuating activities can be accessed via well-defined Data Distribution Service (DDS)\footnote{http://www.omg.org/spec/DDS/1.4} commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet.
+	\subsection{Greenhouse}
+	\label{sec:greenhouse}
+	The \textbf{greenhouse}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the fan controller and the window handling engine actuators. The CO$_2$ concentration level can be sensed using the carbon-dioxide sensor. In this task we do not have to set or handle the greenhouse physically. Instead, the sensing and actuating activities can be accessed via well-defined DDS commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet.
 	\begin{lstlisting}[
 		basicstyle=\small, %or \small or \footnotesize etc.
 	]
-struct Conservatory{
+struct Greenhouse{
   string ID; //@key
   double Value;
   long TimeStamp;
 };
 	\end{lstlisting}
 	
-	Table \ref{tab:conservatory-dds} summarizes the valid DDS commands that can be used for communication with the conservatory on the DDS channel.
+	Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel.
 	
-	\begin{mytable}{Valid DDS commands of the conservatory.}{conservatory-dds}{|cccc|}
+	\begin{mytable}{Valid DDS commands of the greenhouse.}{greenhouse-dds}{|cccc|}
 		\hline
 		\textbf{Topic} & \textbf{Read/Written} & \textbf{ID} & \textbf{Possible Values} \\ \hline \hline
 	\end{mytable}
 	
 	\subsection{Gateway}
 	
-	The task of the \textbf{gateway} is to control the carbon-dioxide level of the conservatory using its sensor and actuators. The communication between the conservatory and the gateway is based on DDS, as presented in Section \ref{sec:conservatory}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services.
+	The task of the \textbf{gateway} is to control the carbon-dioxide level of the greenhouse using its sensor and actuators. The communication between the greenhouse and the gateway is based on DDS, as presented in Section \ref{sec:greenhouse}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services.
 	
-	The gateway periodically samples the CO$_2$ concentration level of the conservatory and takes further actions based on the received value. The activity is depicted in Figure \ref{fig:activity} using an activity diagram.
+	The gateway periodically samples the CO$_2$ concentration level of the greenhouse and takes further actions based on the received value. The activity is depicted in Figure \ref{fig:activity} using an activity diagram.
 		
 	\begin{figure}[h!]
 		\center
@@ -132,7 +158,7 @@ struct Conservatory{
 	\end{figure}
 	
 	\subsection{Cloud Services}
-	The \textbf{cloud services} -- apart from the timetable service -- are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, if certain values of the incoming data are too high, alerts (in the form of e-mails) can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the conservatory.
+	The \textbf{cloud services} -- apart from the timetable service -- are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, if certain values of the incoming data are too high, alerts (in the form of e-mails) can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the greenhouse.
 	
 	The timetable service is our custom implementation, whereas the other cloud services are provided by commercial cloud service providers.
 	
@@ -168,7 +194,7 @@ struct Conservatory{
 	
 	\section{Conclusion}
 	
-%	Figure \ref{fig:architecture} depicts the architecture of the implemented CPS. As can be seen, the system consists of three bigger blocks: the conservatory, a gateway and the cloud. 
+%	Figure \ref{fig:architecture} depicts the architecture of the implemented CPS. As can be seen, the system consists of three bigger blocks: the greenhouse, a gateway and the cloud. 
 %	
 %	\begin{figure}[h!]
 %		\center
@@ -179,16 +205,16 @@ struct Conservatory{
 %		\label{fig:architecture}
 %	\end{figure}
 %
-%	The \textbf{conservatory} is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan, which can be used to circulate the air, as well as two windows, which can be opened and closed. Regarding sensors and actuators, the conservatory contains a carbon-dioxide sensor in addition to the two window openers and a fan controller.
+%	The \textbf{greenhouse} is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan, which can be used to circulate the air, as well as two windows, which can be opened and closed. Regarding sensors and actuators, the greenhouse contains a carbon-dioxide sensor in addition to the two window openers and a fan controller.
 %	
-%	The job of the \textbf{gateway} is to control the carbon-dioxide level of the conservatory using its sensor and actuators. The communication between the conservatory and the gateway is based on DDS. Furthermore, the gateway utilizes cloud services (via the HTTPS protocol) to ensure the quality of the controlling service.
+%	The job of the \textbf{gateway} is to control the carbon-dioxide level of the greenhouse using its sensor and actuators. The communication between the greenhouse and the gateway is based on DDS. Furthermore, the gateway utilizes cloud services (via the HTTPS protocol) to ensure the quality of the controlling service.
 %	
-%	The \textbf{cloud services} (apart from the timetable service) are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, incoming data can be visualized. Furthermore, if certain values of the incoming data are too high, alerts can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the conservatory.
+%	The \textbf{cloud services} (apart from the timetable service) are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, incoming data can be visualized. Furthermore, if certain values of the incoming data are too high, alerts can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the greenhouse.
 %	
 %	\section{Gateway Functionalities}
 %	This section introduces the most important functionalities of the gateway on a lower abstraction level. All gateway functionalities have been implemented in Java 8.
 %	
-%	After the gateway is initiated, it initializes the DDS infrastructure. It has a single reader entity, which reads the carbon-dioxide concentration on the particular topic where the gas sensor of the conservatory publishes its data. Additionally, it has a writer entity responsible for publishing commands on the corresponding topic, which control the window opener and fan controller of the conservatory in accordance with the sensed carbon-dioxide concentration level.
+%	After the gateway is initiated, it initializes the DDS infrastructure. It has a single reader entity, which reads the carbon-dioxide concentration on the particular topic where the gas sensor of the greenhouse publishes its data. Additionally, it has a writer entity responsible for publishing commands on the corresponding topic, which control the window opener and fan controller of the greenhouse in accordance with the sensed carbon-dioxide concentration level.
 %	
 %	The handling of incoming data is implemented in accordance with the activity diagram presented in the system design (see Figure \ref{fig:activity}).
 %	
@@ -214,7 +240,7 @@ struct Conservatory{
 %		\end{lstlisting}
 %	\end{itemize}
 %
-%	Furthermore, the gateway communicates with the cloud each time it receives data from the conservatory. This is achieved by using the \textsl{DeviceClient} class of the Azure Development Kit.
+%	Furthermore, the gateway communicates with the cloud each time it receives data from the greenhouse. This is achieved by using the \textsl{DeviceClient} class of the Azure Development Kit.
 %	Each message transmitted to the cloud conforms to the following JSON format.
 %	\begin{lstlisting}[
 %		basicstyle=\small, %or \small or \footnotesize etc.
