@@ -4,12 +4,12 @@ import java.util.Date;
 
 public class TimetableEntry {
 
-	private String lessonName;
+	private String activityName;
 	private Date beginning;	
 	private Date end;
 	
-	public TimetableEntry(String lessonName, Date beginning, Date end) {
-		this.lessonName = lessonName;
+	public TimetableEntry(String activityName, Date beginning, Date end) {
+		this.activityName = activityName;
 		this.beginning = beginning;
 		this.end = end;
 	}
@@ -23,12 +23,12 @@ public class TimetableEntry {
 		return end.before(date);
 	}
 
-	public String getLessonName() {
-		return lessonName;
+	public String getActivityName() {
+		return activityName;
 	}
 
-	public void setLessonName(String lessonName) {
-		this.lessonName = lessonName;
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
 	}
 
 	public Date getBeginning() {
@@ -49,7 +49,7 @@ public class TimetableEntry {
 	
 	@Override
 	public String toString() {
-		return "TimetableEntry [lessonName=" + lessonName + ", beginning=" + beginning + ", end=" + end + "]";
+		return "TimetableEntry [activityName=" + activityName + ", beginning=" + beginning + ", end=" + end + "]";
 	}
 	
 }

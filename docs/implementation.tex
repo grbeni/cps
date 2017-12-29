@@ -187,8 +187,10 @@ struct Greenhouse {
 	\begin{lstlisting}[
 	basicstyle=\small, %or \small or \footnotesize etc.
 	]
-{"id":"Id","value":951.39,"timeStamp":935971181, "level":"normal"}
+{"id":"Id","value":951.39,"timeStamp":935971181,"level":"normal"}
 	\end{lstlisting}
+	
+	\textsl{Id} serves as an identifier for the message, \textsl{value} indicates the CO$_2$ concentration of the air in the greenhouse. \textsl{TimeStamp} specifies the time of sending the message, and \textsl{level} indicates the level of the CO$_2$ concentration of the air. 
 		
 	As can be seen, the greenhouse with the gateway is responsible for implementing all \textsl{sensing} and \textsl{actuating} functional requirements: REQ-SC-1, and REQ-AC-1, REQ-AC-2, REQ-AC-3, REQ-AC-4. Furthermore, it partly implements accessible requirements REQ-AS-1 and REQ-AS-4-1. The messages are sent to the cloud via a secure channel to implement REQ-EF-2. Also, the logic is implemented in Java to meet REQ-IC-1. Finally, the communication with the greenhouse is based on DDS, thus, REQ-IC-2 is met.
 	
@@ -204,10 +206,22 @@ struct Greenhouse {
 basicstyle=\small, %or \small or \footnotesize etc.
 ]
 {"activity": false, "date": 1514581029369}
-\end{lstlisting}
+	\end{lstlisting}
 
 The \textsl{activity} attribute indicates whether there is human activity in the greenhouse when the server receives the request. The \textsl{date} attribute specifies the date of receiving the request of the client.
 
+The server maintains a very simple text file, which stores the dates of human activity in the greenhouse. The text file contains entries that conform to the following format:
+	\begin{lstlisting}[
+basicstyle=\small, %or \small or \footnotesize etc.
+]
+{"entries":[
+{"activityName":"CPS lesson", "beginning":"Dec 8, 2018 1:15:00 PM",
+"end":"Dec 8, 2018 1:45:00 PM"}
+]}
+\end{lstlisting}
+The \textsl{activityName} attribute describes the activity taking place from the date described by attribute \textsl{beginning} to \textsl{end}.
+
+When the server receives a request, it checks whether there is an activity registered in the file whose \textsl{beginning} and \textsl{end} attributes include the moment of the reception of the request. If so, it returns a message with attribute \textsl{activity} set to \emph{true}, otherwise to \emph{false}.
 	
 	\subsubsection{Azure Services}
 	
