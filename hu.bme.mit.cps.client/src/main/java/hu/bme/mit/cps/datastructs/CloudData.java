@@ -7,13 +7,13 @@ public class CloudData {
 	public String id=  "" ; /* maximum length = (255) */
     public double value= 0;
     public int timeStamp= 0;
-    public String comment;
+    public String level;
 
-	public CloudData(UvegHaz uvegHaz, String comment) {
+	public CloudData(UvegHaz uvegHaz, String level) {
 		this.id = uvegHaz.ID;
 		this.value = uvegHaz.Value;
 		this.timeStamp = uvegHaz.TimeStamp;
-		this.comment = comment;
+		this.level = level;
 	}
 	
 	public CloudData() {}

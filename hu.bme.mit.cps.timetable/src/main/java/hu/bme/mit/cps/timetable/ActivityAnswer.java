@@ -11,26 +11,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
-public class LessonAnswer {
+public class ActivityAnswer {
 
 	@XmlElement
-	private boolean lesson;
+	private boolean activity;
 	@XmlElement
 	private Date date;
 	
-	public LessonAnswer(boolean lesson) {
-		this.lesson = lesson;
+	public ActivityAnswer(boolean activity) {
+		this.activity = activity;
 		this.date = new Date();
 	}
 	
-	public LessonAnswer() {}
+	public ActivityAnswer() {}
 	
-	public boolean getLesson() {
-		return lesson;
+	public boolean getActivity() {
+		return activity;
 	}
 	
-	public void setLesson(boolean lesson) {
-		this.lesson = lesson;
+	public void setActivity(boolean activity) {
+		this.activity = activity;
 	}
 	
 	public void setDate(Date date) {

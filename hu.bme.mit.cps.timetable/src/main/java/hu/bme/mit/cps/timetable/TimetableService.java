@@ -28,8 +28,8 @@ public class TimetableService implements ITimetableService {
 	}
 	
 	@Override
-	public LessonAnswer hasLesson() {
-		return new LessonAnswer(timetable.containsLesson(new Date()));
+	public ActivityAnswer hasActivity() {
+		return new ActivityAnswer(timetable.containsLesson(new Date()));
 	}
 
 }

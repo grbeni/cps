@@ -8,7 +8,7 @@ import javax.ws.rs.core.MediaType;
 @Path("timetable")
 public interface ITimetableService {
 	@GET
-	@Path("lesson")
+	@Path("activity")
 	@Produces(MediaType.APPLICATION_JSON)
-	public LessonAnswer hasLesson();
+	public ActivityAnswer hasActivity();
 }

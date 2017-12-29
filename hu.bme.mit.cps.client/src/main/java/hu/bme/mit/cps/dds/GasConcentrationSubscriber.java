@@ -25,7 +25,7 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	// Stores whether the last check resulted in an alert
 	private boolean hadAlert;
 	// To store whether there is a lesson
-	private volatile boolean hasLesson;
+	private volatile boolean hasActivity;
 	// To communicate with the timetable service
 	private TimetableClient timetableClient;
 	// Timer to check the lessons periodically
@@ -85,7 +85,7 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	}
 
 	private boolean needsAlert(double concentration) {
-		if (hasLesson) {
+		if (hasActivity) {
 			return concentration >= MyConstants.WARNING_LEVEL_CLASS;
 		} else {
 			return concentration >= MyConstants.WARNING_LEVEL_NO_CLASS;
@@ -93,7 +93,7 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 	}
 	
 	private String alertLevel(double concentration) {
-		if (hasLesson) {
+		if (hasActivity) {
 			if (concentration >= MyConstants.CRITICAL_LEVEL_CLASS) {
 				return "critical";
 			}
@@ -128,8 +128,8 @@ public class GasConcentrationSubscriber extends DataReaderAdapter {
 			@Override
 			public void run() {
 				System.out.println("Checking lesson");
-				hasLesson = timetableClient.hasLesson();
-				System.out.println("Has lesson: " + hasLesson);
+				hasActivity = timetableClient.hasActivity();
+				System.out.println("Has lesson: " + hasActivity);
 			}
 		}, 0, MyConstants.LESSON_CHECK_INTERVAL);
 	}

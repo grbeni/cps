@@ -8,11 +8,11 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 public class TimetableClient {
 
-	public boolean hasLesson() {
+	public boolean hasActivity() {
 		ITimetableService timetableClient = createClient(ITimetableService.class);
-		LessonAnswer lessonAnswer = timetableClient.hasLesson();
-		System.out.println("Incoming lesson answer: " + lessonAnswer.getDate());
-		return lessonAnswer.getLesson();
+		ActivityAnswer activityAnswer = timetableClient.hasActivity();
+		System.out.println("Incoming lesson answer: " + activityAnswer.getDate());
+		return activityAnswer.getActivity();
 	}
 	
 	private <T> T createClient(Class<T> clazz) {
