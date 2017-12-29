@@ -129,7 +129,7 @@
 
 	\subsection{Greenhouse}
 	\label{sec:greenhouse}
-	The \textbf{greenhouse}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the fan controller and the window handling engine actuators. The CO$_2$ concentration level can be sensed using the carbon-dioxide sensor. In this task we do not have to set or handle the greenhouse physically. Instead, the sensing and actuating activities can be accessed via well-defined DDS commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet.
+	The \textbf{greenhouse}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the \emph{fan controller} and the \emph{window handling engine} actuators. The CO$_2$ concentration level can be sensed using the \emph{carbon-dioxide sensor}. In this task we do not have to set or handle the greenhouse physically. Instead, the sensing and actuating activities can be accessed via well-defined DDS commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet.
 	\begin{lstlisting}[
 		basicstyle=\small, %or \small or \footnotesize etc.
 	]
@@ -140,7 +140,7 @@ struct Greenhouse {
 };
 	\end{lstlisting}
 	
-	Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel. Domain 0 is used for the communication. \emph{Topics} are used to segregate the command types.  Commands of certain topics can be \emph{read}, \emph{written} or \emph{read and written} by the greenhouse. The \emph{ID} of the command specifies the source (sensor) of particular data or concrete command (for actuation). The values of the commands specify particular data values or parameters of a certain command.
+	Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel. Domain 0 is used for the communication. \emph{Topics} are used to segregate the command types.  Commands of certain topics can be \emph{read}, \emph{written} or \emph{read and written} by the greenhouse. The \emph{ID} of the command specifies the source (sensor) of particular data or concrete command (for actuation). The values of the commands specify particular data values (CO$_2$ concentration) or parameters of a certain command.
 	
 	\begin{mytable}{DDS commands of the greenhouse.}{greenhouse-dds}{|cccc|}
 		\hline
@@ -152,37 +152,43 @@ struct Greenhouse {
 		window & window2 & \xmark/\cmark &  \specialcell{0 -- \textsl{window2} is closed, \\ 1 -- \textsl{window2} is open.}  \\ \hline
 		window & setwindow1 & \cmark/\xmark &  \specialcell{0 -- the greenhouse will close \textsl{window1}, \\ 1 -- the greenhouse will open \textsl{window1}.} \\ \hline
 		window & setwindow2 & \cmark/\xmark &  \specialcell{0 -- the greenhouse will close \textsl{window2}, \\ 1 -- the greenhouse will open \textsl{window2}.} \\ \hline
-		window & setvent & \cmark/\xmark &  \specialcell{0 -- the greenhouse will turn off the fan, \\ 1 -- the greenhouse will turn on the fan.} \\ \hline
-		
+		window & setvent & \cmark/\xmark &  \specialcell{0 -- the greenhouse will turn off the fan, \\ 1 -- the greenhouse will turn on the fan.} \\ \hline		
 	\end{mytable}
 	
 	\subsection{Gateway}
 	
-	The task of the \textbf{gateway} is to control the carbon-dioxide level of the greenhouse using data of its sensor and utilizing its actuators. The communication between the greenhouse and the gateway is based on DDS, as presented in Section \ref{sec:greenhouse}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services as defined in the requirements in Section \ref{sec:requirements}.	
+	The task of the \textbf{gateway} is to control the carbon-dioxide level of the greenhouse using sensor data and utilizing its actuators. The communication between the greenhouse and the gateway is based on DDS, as presented in Section \ref{sec:greenhouse}. Furthermore, the gateway utilizes cloud services -- via the HTTPS protocol -- to ensure the quality of the controlling service and provide additional business services as defined in the requirements in Section \ref{sec:requirements}.	
 	
 	The operation of the gateway is simple, it is depicted in Figure \ref{fig:activity} using an activity diagram.
 	
 	\begin{figure}[h!]
 		\center
 		\resizebox{140mm}{!}{
-			\includegraphics{fig/activity.jpg}
+			\includegraphics{fig/activity.pdf}
 		}
 		\caption{The activity diagram describing the periodic activity of the gateway.}
 		\label{fig:activity}
 	\end{figure}
 	
-	The gateway periodically samples the CO$_2$ concentration level of the air of the greenhouse. It saves the value locally, thus a certain number of samples are available even if the cloud service is unreachable for a short period of time. Moreover, the gateway sends the data to cloud in accordance with the following JSON format.
+	The gateway periodically samples the CO$_2$ concentration level of the air of the greenhouse. After sampling, it saves the value locally, thus a certain number of samples are available even if the cloud service is unreachable for a short period of time. 
 	
-\begin{lstlisting}[
+	Further actions are based on the received concentration value as well as the data received from the timetable service. The logic reacts differently based on whether there is registered human activity in the room in the particular moment or not. To get this information, the gateway communicates with the timetable service periodically (e.g, every minute) and stores the answer. The limit values regarding the CO$_2$ concentration value with respect to human activity are specified by Table \ref{tab:limit-values}.
+	
+	\begin{mytable}{Limit values of CO$_2$ concentration in ppm with respect to registered human activity.}{limit-values}{|cccc|}
+		\hline
+		 & \textbf{Normal} & \textbf{Increased} & \textbf{Critical} \\ \hline \hline
+		\textbf{Human activity} & Under 800 & Between 800 and 2000 & Above 2000 \\ \hline
+		\textbf{No human activity} & Under 1000 & Between 1000 and 3000 & Above 3000 \\ \hline
+		
+	\end{mytable}
+	
+	If the CO$_2$ concentration of the air is on \emph{normal} level (regarding human activity in the room), the gateway sets the \textsl{level} attribute of the message that is to be sent to the cloud to \emph{normal}. Moreover, the gateway ensures that the windows are closed and the fan is turned off by sending the corresponding DDS commands to the greenhouse.  If the concentration level is \emph{increased}, the gateway sets the \textsl{level} attribute to \emph{increased} in addition to opening the windows and turning on the fans of the greenhouse. Finally, if the CO$_2$ concentration level is \emph{critical}, it sets the level attribute to \emph{critical}, in addition to initiating the necessary actuating activities. Finally, the gateway sends the message to the cloud in accordance with the following JSON format.
+	
+	\begin{lstlisting}[
 	basicstyle=\small, %or \small or \footnotesize etc.
-]
-{"id":"Id","value":95.39,"timeStamp":935971181,
- "comment":"critical"}
-\end{lstlisting}
-	
-	Further actions are based on the received concentration value as well as the data received from the timetable service. The logic reacts differently based on whether there is registered human activity in the room in the particular moment or not. To get this information the gateway communicates with the timetable service periodically (e.g, every minute) and stores the answer.
-	
-	If the CO$_2$ concentration of the air is on \emph{normal} level (regarding human activity in the room), the gateway ensures that the windows are closes and the fan is turned off by sending the corresponding DDS commands to the greenhouse. If the concentration is \emph{increased}, the gateway sends a warning message using the corresponding cloud service in addition to opening the windows and turning on the fans. Finally, if the CO$_2$ concentration level is \emph{critical}, it sends an alert message in addition to initiating the necessary actuating activities.
+	]
+{"id":"Id","value":951.39,"timeStamp":935971181, "level":"normal"}
+	\end{lstlisting}
 		
 	As can be seen, the greenhouse with the gateway is responsible for implementing all \textsl{sensing} and \textsl{actuating} functional requirements: REQ-SC-1, and REQ-AC-1, REQ-AC-2, REQ-AC-3, REQ-AC-4. Furthermore, it partly implements accessible requirements REQ-AS-1 and REQ-AS-4-1. The messages are sent to the cloud via a secure channel to implement REQ-EF-2. Also, the logic is implemented in Java to meet REQ-IC-1. Finally, the communication with the greenhouse is based on DDS, thus, REQ-IC-2 is met.
 	
