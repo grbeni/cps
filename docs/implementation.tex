@@ -208,24 +208,31 @@ basicstyle=\small, %or \small or \footnotesize etc.
 {"activity": false, "date": 1514581029369}
 	\end{lstlisting}
 
-The \textsl{activity} attribute indicates whether there is human activity in the greenhouse when the server receives the request. The \textsl{date} attribute specifies the date of receiving the request of the client.
+	The \textsl{activity} attribute indicates whether there is human activity in the greenhouse when the server receives the request. The \textsl{date} attribute specifies the date of receiving the request of the client.
 
-The server maintains a very simple text file, which stores the dates of human activity in the greenhouse. The text file contains entries that conform to the following format:
+	The server maintains a very simple text file, which stores the dates of human activity in the greenhouse. The text file contains entries that conform to the following format:
 	\begin{lstlisting}[
 basicstyle=\small, %or \small or \footnotesize etc.
 ]
-{"entries":[
-{"activityName":"CPS lesson", "beginning":"Dec 8, 2018 1:15:00 PM",
-"end":"Dec 8, 2018 1:45:00 PM"}
+{"entries": [
+  {"activityName":"CPS lesson",
+  "beginning":"Dec 8, 2018 1:15:00 PM",
+  "end":"Dec 8, 2018 1:45:00 PM"}
 ]}
 \end{lstlisting}
-The \textsl{activityName} attribute describes the activity taking place from the date described by attribute \textsl{beginning} to \textsl{end}.
+	The \textsl{activityName} attribute describes the activity taking place from the date described by attribute \textsl{beginning} to \textsl{end}.
 
-When the server receives a request, it checks whether there is an activity registered in the file whose \textsl{beginning} and \textsl{end} attributes include the moment of the reception of the request. If so, it returns a message with attribute \textsl{activity} set to \emph{true}, otherwise to \emph{false}.
+	When the server receives a request, it checks whether there is an activity registered in the file whose \textsl{beginning} and \textsl{end} attributes include the the reception time of the request. If so, it returns a message with attribute \textsl{activity} set to \emph{true}, otherwise to \emph{false}.
+	
+	Due to this design, REQ-AS-4 is met.
 	
 	\subsubsection{Azure Services}
 	
-	Figure \ref{fig:cloud} depicts the integration of the data and alert services of the CPS.
+	Microsoft Azure provides a large variety of services, which can easily be tailored to our needs and requirements. The design of this CPS component consists of choosing the right Azure services and defining their integration. The chosen Azure services are as follows:
+	\begin{itemize}
+		\item IoT Hub for
+	\end{itemize}
+	Figure \ref{fig:azure-cloud} depicts the integration of the data and alert services of the CPS.
 		
 	\begin{figure}[h!]
 		\center
@@ -233,7 +240,7 @@ When the server receives a request, it checks whether there is an activity regis
 			\includegraphics{fig/cloud.pdf}
 		}
 		\caption{The data flow in the cloud.}
-		\label{fig:cloud}
+		\label{fig:azure-cloud}
 	\end{figure}
 	
 	Each message transmitted to the cloud is first processed by the IoT Hub. This is the central element in the cloud. It is 	capable of routing incoming messages to other service nodes based on certain properties. The additional services are as follows.
