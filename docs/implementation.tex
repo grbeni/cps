@@ -51,7 +51,7 @@
 	\maketitle
 	\tableofcontents
 	\newpage
-	
+	\section*{Introduction}
 	This document introduces the implementation of a cyber-physical system (CPS) prototype, whose task is to keep the \emph{carbon-dioxide} concentration level of the air in a particular \emph{greenhouse} under an acceptable limit value.
 	The greenhouse is an object with the approximate volume of a cubic meter. It has two \emph{windows} and a single \emph{fan}, which can be used to circulate the air in the object. The local elements of the presented CPS, which are located in the greenhouse, are the followings:
 	\begin{itemize}
@@ -163,7 +163,7 @@ struct Greenhouse {
 	
 	\begin{figure}[h!]
 		\center
-		\resizebox{140mm}{!}{
+		\resizebox{145mm}{!}{
 			\includegraphics{fig/activity.pdf}
 		}
 		\caption{The activity diagram describing the periodic activity of the gateway.}
@@ -193,19 +193,29 @@ struct Greenhouse {
 	As can be seen, the greenhouse with the gateway is responsible for implementing all \textsl{sensing} and \textsl{actuating} functional requirements: REQ-SC-1, and REQ-AC-1, REQ-AC-2, REQ-AC-3, REQ-AC-4. Furthermore, it partly implements accessible requirements REQ-AS-1 and REQ-AS-4-1. The messages are sent to the cloud via a secure channel to implement REQ-EF-2. Also, the logic is implemented in Java to meet REQ-IC-1. Finally, the communication with the greenhouse is based on DDS, thus, REQ-IC-2 is met.
 	
 	\subsection{Cloud Services}
-	The \textbf{cloud services} -- apart from the timetable service -- are tightly integrated with each other. The data coming to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, if certain values of the incoming data are too high, alerts (in the form of e-mails) can be sent. Finally, the timetable service holds information about the lessons taking place in the room represented by the greenhouse.
+	The \textbf{cloud} is used to provide special services regarding the control of th CO$_2$ concentration of the air in the greenhouse. All data sent to the cloud is stored on persistent containers. Also, the visualization of stored data is supported. Furthermore, depending on the \textsl{level} attribute of incoming messages, alerts (in the form of e-mails) can be sent to registered addresses. Finally, the timetable service holds information about human activity in the greenhouse.
 	
-	The timetable service is our custom implementation, whereas the other cloud services are provided by commercial cloud service providers.
+	The cloud services -- apart from the timetable service -- are tightly integrated with each other. The timetable service is our custom implementation, whereas the other cloud services, to meet REQ-IC-3, are provided by Microsoft Azure Cloud.
 	
 	\subsubsection{Timetable Service}
+	The timetable service is a custom implemented service reachable via a REST\footnote{https://en.wikipedia.org/wiki/Representational\_state\_transfer} API deployed on \emph{local host} on port 8080. To reach the service a GET message has to be sent to the following URL: \textsl{http://localhost:8080/hu.bme.mit.cps.timetable/timetable/timetable/activity}. The response is a JSON message in accordance with the following format.
+
+	\begin{lstlisting}[
+basicstyle=\small, %or \small or \footnotesize etc.
+]
+{"activity": false, "date": 1514581029369}
+\end{lstlisting}
+
+The \textsl{activity} attribute indicates whether there is human activity in the greenhouse when the server receives the request. The \textsl{date} attribute specifies the date of receiving the request of the client.
+
 	
-	\subsubsection{Data and Alert Services}
+	\subsubsection{Azure Services}
 	
 	Figure \ref{fig:cloud} depicts the integration of the data and alert services of the CPS.
 		
 	\begin{figure}[h!]
 		\center
-		\resizebox{125mm}{!}{
+		\resizebox{135mm}{!}{
 			\includegraphics{fig/cloud.pdf}
 		}
 		\caption{The data flow in the cloud.}
