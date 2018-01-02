@@ -108,7 +108,7 @@
 	\subsection{Implementation Constraints}
 	REQ-IC-1: The local components directly controlling the greenhouse shall operate on the Java platform\footnote{https://www.java.com/}.
 	
-	REQ-IC-2: Separate local components shall communicate using the Distributed Data Service\footnote{http://www.omg.org/spec/DDS/1.4} (DDS).
+	REQ-IC-2: Separate local components shall communicate using the Distributed Data Service\footnote{http://portals.omg.org/dds/} (DDS).
 	
 	REQ-IC-3: The cloud services shall run in the Microsoft Azure Cloud\footnote{https://azure.microsoft.com/}.
 	
@@ -129,18 +129,31 @@
 
 	\subsection{Greenhouse}
 	\label{sec:greenhouse}
-	The \textbf{greenhouse}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the \emph{fan controller} and the \emph{window handling engine} actuators. The CO$_2$ concentration level can be sensed using the \emph{carbon-dioxide sensor}. In this task we do not have to set or handle the greenhouse physically. Instead, the sensing and actuating activities can be accessed via well-defined DDS commands. The data structure of the commands is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet.
-	\begin{lstlisting}[
-		basicstyle=\small, %or \small or \footnotesize etc.
-	]
-struct Greenhouse {
-  string ID; //@key
-  double Value;
-  long TimeStamp;
-};
-	\end{lstlisting}
+	The \textbf{greenhouse}, as presented in the introduction, is the physical entity where the concentration of carbon-dioxide needs to be controlled. It has a single fan as well as two windows, which can be accessed using the \emph{fan controller} and the \emph{window handling engine} actuators. The CO$_2$ concentration level can be sensed using the \emph{carbon-dioxide sensor}. In this task we do not have to set or handle the greenhouse physically. Instead, the sensing and actuating activities can be accessed using DDS \emph{samples}, which can serve as data or commands.
 	
-	Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel. Domain 0 is used for the communication. \emph{Topics} are used to segregate the command types.  Commands of certain topics can be \emph{read}, \emph{written} or \emph{read and written} by the greenhouse. The \emph{ID} of the command specifies the source (sensor) of particular data or concrete command (for actuation). The values of the commands specify particular data values (CO$_2$ concentration) or parameters of a certain command.
+	Figure \ref{fig:greenhouse} depicts the DDS setting in which the environment (e.g., the gateway) can communicate with the greenhouse. Domain 0 is used for the communication. \emph{Topics} (\textsl{co2} and \textsl{window}) are used to segregate the sample types. Samples of certain topics can be \emph{read}, \emph{written} or \emph{read and written} by the greenhouse: topic \textsl{co2} is write-only, i.e., the greenhouse only publishes samples on this topic, whereas on topic \textsl{window} samples are both published and received by the greenhouse.
+	
+	\begin{figure}[h!]
+		\center
+		\resizebox{140mm}{!}{
+			\includegraphics{fig/greenhouse.pdf}
+		}
+		\caption{The flow of data and commands between the greenhouse and the gateway using DDS.}
+		\label{fig:greenhouse}
+	\end{figure}
+	
+	 The data structure of the samples is described by the following IDL\footnote{http://www.corba.org/omg\_idl.htm} code snippet. Note that source code can be generated from this IDL structure definition, greatly simplifying the implementation phase.
+	 \begin{lstlisting}[
+	 basicstyle=\small, %or \small or \footnotesize etc.
+	 ]
+struct Greenhouse {
+    string ID; //@key
+    double Value;
+    long TimeStamp;
+};
+	 \end{lstlisting}
+	 
+	 The fields of the data structure are interpreted as follows. The \emph{ID} field of a sample specifies the source (sensor) of particular data or receiver (actuator) of a command. The \emph{value} field of a sample specify particular data values (CO$_2$ concentration) or parameters of a certain command. Table \ref{tab:greenhouse-dds} summarizes the valid DDS commands that can be used for communication with the greenhouse on the DDS channel.
 	
 	\begin{mytable}{DDS commands of the greenhouse.}{greenhouse-dds}{|cccc|}
 		\hline
@@ -255,7 +268,7 @@ basicstyle=\small, %or \small or \footnotesize etc.
 	 \begin{itemize}
 	 	\item Each message is transferred to the blob and saved (persistent storage). This way received messages can be inspected or downloaded later using a graphical web interface.
 		\item Each message is transferred to the stream analytics service that sends the data to the Power BI visualization service. Data visualization with several diagram types and settings can be initiated using a graphical web interface. 
-	 	\item If the \textsl{alert} property of a message is \textsl{true}, then a message is transmitted to the alert service bus. The service bus stores the messages in its queue and forwards them one-by-one to the logic app implementing the alert service. The alert service is responsible for sending e-mails to the specified addresses.
+	 	\item If the \textsl{alert} property of a message is \textsl{true}, then an \emph{alert message} is transmitted to the alert service bus. The service bus stores the alert messages in its queue and forwards them one-by-one to the logic app implementing the alert service. The alert service is responsible for sending e-mails to the specified addresses.
 	 \end{itemize}
  
  	The Azure cloud services (as its usage is required by REQ-IC-3) implement REQ-AS-1, REQ-AS-2 and REQ-AS-3 functional requirements. Also, the services provided by Microsoft are suitable for meeting REQ-EF-1. 
